@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  unicornimages.filters:
+    image: ${DOCKER_REGISTRY-}unicornimagesfilters
+    build:
+      context: .\UnicornImages.Filters
+      dockerfile: Dockerfile

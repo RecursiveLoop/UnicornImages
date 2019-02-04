@@ -1,0 +1,44 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+    TestAPI
+    
+    A short description of the project
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+    Function:
+        Runtime: dotnetcore2.1
+        Timeout: 10
+
+Resources:
+
+    TestAPIFunction:
+        Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+        Properties:
+            CodeUri: ./artifacts/TestAPI.zip
+            Handler: TestAPI::TestAPI.Function::FunctionHandler
+            Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
+                Variables:
+                    PARAM1: VALUE
+            Tracing: Active  # https://docs.aws.amazon.com/lambda/latest/dg/lambda-x-ray.html
+            Events:
+                CatchAll:
+                    Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+                    Properties:
+                        Path: /{proxy+}
+                        Method: any 
+
+Outputs:
+
+    TestAPIURL:
+      Description: "API Gateway endpoint URL for Prod environment for TestAPI Function"
+      Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/proxy"
+
+    TestAPIArn:
+      Description: "TestAPI Lambda Function ARN"
+      Value: !GetAtt TestAPI.Arn
+
+    TestAPIIamRole:
+      Description: "Implicit IAM Role created for TestAPI function"
+      Value: !GetAtt TestAPIRole.Arn
